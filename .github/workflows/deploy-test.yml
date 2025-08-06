@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Sanity check TCP 10022
+        run: |
+          (echo >/dev/tcp/${{ secrets.XSERVER_HOST }}/10022) >/dev/null 2>&1 \
+            && echo "TCP 10022 OPEN" || (echo "TCP 10022 CLOSED"; exit 1)
 
       - name: Create healthcheck file
         run: |
