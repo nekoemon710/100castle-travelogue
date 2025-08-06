@@ -16,16 +16,16 @@ jobs:
           mkdir -p out
           echo "deployed: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > out/healthcheck.txt
 
-      - name: Upload to Xserver via SFTP
+           - name: Upload to Xserver via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.XSERVER_HOST }}
-          port: ${{ secrets.XSERVER_PORT }}     # ← 10022 で登録済みか確認
-          username: ${{ secrets.XSERVER_USER }} # ← サーバーID
+          port: 10022                     # ← ここを固定値に変更
+          username: ${{ secrets.XSERVER_USER }}
           ssh_private_key: ${{ secrets.XSERVER_SSH_KEY }}
-          # 鍵にパスフレーズがある場合だけ ↓ を残す（無ければ削除OK）
-          ssh_passphrase: ${{ secrets.XSERVER_SSH_PASSPHRASE }}
+          ssh_passphrase: ${{ secrets.XSERVER_SSH_PASSPHRASE }} # ある人だけ
           local_path: './out/*'
           remote_path: ${{ secrets.XSERVER_REMOTE_PATH }}
           sftp_only: true
           delete_remote_files: false
+
