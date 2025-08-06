@@ -1,6 +1,6 @@
 name: Deploy Test to Xserver
 
-on: workflow_dispatch:
+on: workflow_dispatch
   push:
     branches: ["main"]   # 既定ブランチ名が main 以外ならここを変更
 
