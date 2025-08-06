@@ -23,7 +23,10 @@ jobs:
       - run: pnpm install
 
       # Next.js をビルドして静的出力（out/）
-      - run: pnpm build && pnpm export
+      # --- 修正前 ---
+      # - run: pnpm build && pnpm export
+      # --- 修正後 ---
+      - run: pnpm build          # ← これだけで out/ が生成される
 
       # 成果物をアーティファクトにも保存（任意：後からダウンロードできて安心）
       - uses: actions/upload-artifact@v4
@@ -40,7 +43,7 @@ jobs:
           username: ${{ secrets.XSERVER_USER }}
           ssh_private_key: ${{ secrets.XSERVER_SSH_KEY }}
           ssh_passphrase: ${{ secrets.XSERVER_SSH_PASSPHRASE }}
-          local_path: ./out/*
+          local_path: ./out/*        # ← ここはそのまま
           remote_path: ${{ secrets.XSERVER_REMOTE_PATH }}
           sftp_only: true
           delete_remote_files: false
