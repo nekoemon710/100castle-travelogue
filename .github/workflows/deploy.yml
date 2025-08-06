@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+      # cache: 'pnpm' ← この行を削除（または 'npm' に変える）
 
       # まだ lockfile が無い初回は --frozen-lockfile を付けない
       - run: pnpm install
