@@ -1,0 +1,46 @@
+name: Deploy to Xserver (production)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm と Node を準備
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # まだ lockfile が無い初回は --frozen-lockfile を付けない
+      - run: pnpm install
+
+      # Next.js をビルドして静的出力（out/）
+      - run: pnpm build && pnpm export
+
+      # 成果物をアーティファクトにも保存（任意：後からダウンロードできて安心）
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-out
+          path: out
+
+      # Xserver へ SFTP アップロード
+      - name: Upload to Xserver via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.XSERVER_HOST }}
+          port: 10022
+          username: ${{ secrets.XSERVER_USER }}
+          ssh_private_key: ${{ secrets.XSERVER_SSH_KEY }}
+          ssh_passphrase: ${{ secrets.XSERVER_SSH_PASSPHRASE }}
+          local_path: ./out/*
+          remote_path: ${{ secrets.XSERVER_REMOTE_PATH }}
+          sftp_only: true
+          delete_remote_files: false
