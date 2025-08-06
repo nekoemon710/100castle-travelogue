@@ -2,7 +2,7 @@ name: Deploy Test to Xserver
 
 on:
   push:
-    branches: ["main"]   # ← 既定ブランチが main 以外ならここを変更（例: "master"）
+    branches: ["main"]   # 既定ブランチ名が main 以外ならここを変更
 
 jobs:
   build-and-deploy:
@@ -10,22 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 検証用ファイルを out/ に作る（本番のビルドはまだしない）
       - name: Create healthcheck file
         run: |
           mkdir -p out
           echo "deployed: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > out/healthcheck.txt
 
-           - name: Upload to Xserver via SFTP
+      - name: Upload to Xserver via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.XSERVER_HOST }}
-          port: 10022                     # ← ここを固定値に変更
-          username: ${{ secrets.XSERVER_USER }}
+          port: 10022                      # ← Xserver の SSH/SFTP ポート
+          username: ${{ secrets.XSERVER_USER }}   # ← サーバーID
           ssh_private_key: ${{ secrets.XSERVER_SSH_KEY }}
           ssh_passphrase: ${{ secrets.XSERVER_SSH_PASSPHRASE }} # ある人だけ
-          local_path: './out/*'
+          local_path: ./out/*
           remote_path: ${{ secrets.XSERVER_REMOTE_PATH }}
           sftp_only: true
           delete_remote_files: false
+
 
